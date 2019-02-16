@@ -1,5 +1,8 @@
 import os
 import pandas as pd
+import re
+import numpy as np
+from nltk.tokenize import WordPunctTokenizer
 # author: Sidi Yang
 
 '''
@@ -44,11 +47,70 @@ reviews = pd.concat([
     #pd.DataFrame({"review":testReviews, "target":-1})
 ],
     ignore_index=True).sample(frac=1, random_state=1)
+
+pos_reviews = pd.concat([
+    pd.DataFrame({"review":positiveReviews, "target":1}),
+    #pd.DataFrame({"review":negativeReviews, "target":0}),
+    #pd.DataFrame({"review":testReviews, "target":-1})
+],
+    ignore_index=True).sample(frac=1, random_state=1)
+
+neg_reviews = pd.concat([
+    #pd.DataFrame({"review":positiveReviews, "target":1}),
+    pd.DataFrame({"review":negativeReviews, "target":0}),
+    #pd.DataFrame({"review":testReviews, "target":-1})
+],
+    ignore_index=True).sample(frac=1, random_state=1)
+# prove it works
 print(reviews.head())
 
 # save to csv
 reviews.to_csv('pos_neg_list.csv',index = False)
+pos_reviews.to_csv('pos.csv',index = False)
+neg_reviews.to_csv('neg.csv',index = False)
 
 #save to txt
 with open("pos_neg_list.txt", "w") as output:
     output.write(str(reviews))
+
+with open("pos.txt", "w") as output:
+    output.write(str(pos_reviews))
+
+with open("neg.txt", "w") as output:
+    output.write(str(neg_reviews))
+#
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
+# reviews = reviews[["review", "target"]].sample(frac=1, random_state=1)
+# train = reviews[reviews.target!=-1].sample(frac=0.6, random_state=1)
+# valid = reviews[reviews.target!=-1].drop(train.index)
+# test = reviews[reviews.target==-1]
+#
+# print(train.shape)
+# print(valid.shape)
+# print(test.shape)
+
+# preprocssing
+# DataFrame object has no attribute "lower"
+#lower_comm = neg_reviews.lower()
+#def preprocessing_data(text):
+   # pass
+
+'''
+
