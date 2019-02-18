@@ -104,6 +104,8 @@ import re
 def clean_htmlandsymbol(raw_text):
   cleantext_nohtml = re.sub(re.compile('<.*?>|[0-9]'), '', raw_text)
   cleantext_nosymbolandhtml = re.sub(re.compile('[\-\+!@#$%^&*()<>?()\|\/]'), '', cleantext_nohtml)
+  cleantext_nosymbolandhtml = cleantext_nosymbolandhtml.replace('<br>','')
+  cleantext_nosymbolandhtml = cleantext_nosymbolandhtml.replace('</br>', '')
 
   return cleantext_nosymbolandhtml
 corpus['review'] = corpus['review'].apply(clean_htmlandsymbol)
