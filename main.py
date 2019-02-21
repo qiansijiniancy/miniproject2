@@ -10,7 +10,16 @@ import re
 import numpy as np
 from nltk.stem import PorterStemmer
 from nltk.tokenize import WordPunctTokenizer
-# author: Sidi Yang
+from collections import Counter
+import math
+
+#nltk.download('wordnet')
+#nltk.download('stopwords')
+
+
+
+# author: Sidi Yang , Negin Ashouri
+
 
 '''
 Step 1: Load Data
@@ -34,7 +43,7 @@ for x in os.listdir(cwd + '/data/train/neg/'):
 #     if x.endswith(".txt"):
 #         test_folder.append(x)
 
-test_review_file = pd.read_csv('/Users/cindyang/Desktop/Imdb_sentiment_analysis/test.csv',encoding="latin1")
+test_review_file = pd.read_csv('/home/negin/Desktop/Python/ML mini proj2/miniproject2/data/test.csv',encoding="latin1")
 
 ###################
 
@@ -86,6 +95,7 @@ print(test_reviews['review'].tail(10))
 '''
 Step 2: Preprocess Data
 '''
+
 # form corpus with train and test
 corpus = pd.concat([train_reviews,test_reviews], axis=0)
 corpus['review'] = corpus['review'].str.lower()
@@ -93,6 +103,21 @@ corpus['review'] = corpus['review'].str.lower()
 print(corpus['review'].head(10))
 print(type(corpus['review']))
 print(len(corpus))
+
+for each in pos_reviews:
+    output = re.sub(r'\d+', '', each)
+    print("This is pos reviews without number", output)
+split_words = str(pos_reviews).split() # type is list of str , split_words = feature_set
+
+  # each['target'] = each['target'].str.replace('\d+', '')
+print("this is words of each review", split_words)
+
+for file in output:
+    feature_set = set(output)
+print("this is feature set####################### ", feature_set)
+
+
+
 ### https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.astype.html
 ### https://github.com/iworeushankaonce/Imdb/blob/master/Imdb_sentiment_polarity%20(1).ipynb
 ### convert review contents to string & useful for pre-processing
@@ -104,8 +129,6 @@ import re
 def clean_htmlandsymbol(raw_text):
   cleantext_nohtml = re.sub(re.compile('<.*?>|[0-9]'), '', raw_text)
   cleantext_nosymbolandhtml = re.sub(re.compile('[\-\+!@#$%^&*()<>?()\|\/]'), '', cleantext_nohtml)
-  cleantext_nosymbolandhtml = cleantext_nosymbolandhtml.replace('<br>','')
-  cleantext_nosymbolandhtml = cleantext_nosymbolandhtml.replace('</br>', '')
 
   return cleantext_nosymbolandhtml
 corpus['review'] = corpus['review'].apply(clean_htmlandsymbol)
@@ -179,6 +202,169 @@ X_train, X_validation, y_train, y_validation = train_test_split(train_reviews['r
                                                     train_reviews['target'],
                                                     train_size=0.8,
                                                     test_size=0.2)
+
+
+print("This is x train##########################",X_train)
+
+
+
+## Bernoulli Naive Bayes
+
+
+def get_f_counts(data, feature_set):
+    x_counts = [0] * 160
+    counts = dict(Counter(words_data))
+    for word, zingul in counts.items():
+        x_counts[feature_set.index(word)] = zingul
+    return x_counts
+
+#Split Sentences to words
+
+split_words = str(train_reviews).split() # type is list of str , split_words = feature_set
+for each in split_words :
+    words_data = re.sub(r'\d+', '', each)
+  # each['target'] = each['target'].str.replace('\d+', '')
+    if each['target'] == 0:
+        feature_neg = each
+    else :
+        feature_pos = each
+
+    print(words_data)
+#remove_target =  train_reviews['target'].str.replace('\d+', '')
+
+#set of features
+feature_set = set(words_data)
+
+#number of each feature in data
+for data in words_data:
+    # Extract word count feature
+    feature_count = get_f_counts(data, feature_set)
+
+#targets = {0,1}
+def feature_prob(feature_set, targets)
+    for feature in feature_set:
+        for tartget in targets :
+            prob[feature][target] = feature_count[target] / allfeature_counts[target]
+
+
+
+
+for data in reviews #in main
+    BNB_predict(data, target)
+
+def BNB_sigma(X_validation): #X_validation = each review
+    sum_all = 0
+    for x in X_validation :
+        sum_all += BNB_sumx(x)
+    sigma = (math.log10(tetha1/(1-tetha1))) + sum_all
+
+def BNB_prediction(sigma, Y_validation)
+    if(sigma > 0): ]# Predict the target
+        pred_tar[x_val][predict] = '1' # and classify as 1
+    else if (sigma < 0)
+        pred_tar[x_val][predict] = '0' # and classify as 0
+
+    if pred_tar[x_val][predict] == feature??[x_val][target]
+        Accuracy
+
+
+
+
+def BNB_sumx(x):
+    sum_part_one = x * (math.log10(feature_prob(x,1) / feature_prob(x,0)))
+    sum_part_two = (1-x) * (math.log10((1-feature_prob(x,1))/(1- feature_prob(x,0))))
+    sum_x = sum_part_one + sum_part_two
+    return sum_x
+
+
+
+
+
+import re
+def to_words(X_train):
+    return re.findall(r'\w+', X_train)
+textsample = to_words(train_reviews)
+feature_set = set(textsample)
+print(feature_set)
+
+
+tota1 = number of examples where y=1 / total number of examples
+targets = real targets
+count =0 # number of all the features we are considering
+feature_set = set(['negar', 'negin' ,'negar'])
+feature_name[]
+#Split Sentences to words
+split_words = str(train_reviews).split(" ")
+print(split_words)
+
+#extract the features
+if corpus['target'] == 0 :
+
+#creating a set of features
+for target in targets :
+    feature_set = set(feature_name[target])
+    count[target]+=1  # number of all the features we are considering
+
+numOfFeatures = set(feature_name[target]) #number of feature occurances in target(do we have it?)
+
+#number of occurances of each feature in neg & pos
+if corpus['target'] == 0 :
+    feature_set[0][feature_name]
+#going through the whole data and if it is 0, add to feature_set[0] age 1 add to feature_set[1]
+
+
+#start the ocurrances in diff targets(in 1, 0)
+
+# calculating the prob s
+
+# Do the prediction in the prob s
+
+
+
+#Bernoulli train
+
+#Bernoulli Predict(how to say classify as 1 or 0)
+
+#Results accuracy
+
+for data in dataset:
+
+        # Extract word count feature
+        data['x_counts'] = get_x_counts(data, feature_set)
+
+def get_x_counts(data)#, most_freq_words):
+    #x_counts = [0] * 160
+    counts = dict(Counter(data['text'])) #or 'review'
+    for word, count in counts.items():
+        if word in feature_set:
+            feature_counts[feature_set.index(word)] = count
+
+    return feature_counts
+
+'''
+#train
+'''
+tota1 = number of examples where y=1 / total number of examples
+targets = {0,1}
+for target in targets
+numOfFeatures = set(feature_name[target]) #number of feature occurances of feature in target(do we have it?)
+for feature in features:
+    for target in targets:
+        prob[feature][target] = feature[target] / number of all features in [target]  # teta[j][1] , teta[j][0]
+
+
+#predict
+for
+sum =
+delta = log(teta1/(1-teta1)) + sum
+y_vali4_pred = predict(X_validation_normalized)
+#Result
+display_results(y_validation, y_vali4_pred,"")
+'''
+
+
+
+
 ### Bag of Words
 from sklearn.feature_extraction.text import CountVectorizer
 cv = CountVectorizer().fit(X_train)
@@ -223,21 +409,14 @@ clf_SVM = LinearSVC().fit(X_train_normalized, y_train)
 y_vali3_pred = clf_SVM.predict(X_validation_normalized)
 display_results(y_validation, y_vali3_pred,"")
 
-# ### prediction and evaluation
-# from sklearn import metrics
-# y_vali1_pred = clf_LR.predict(X_validation_normalized)
-# print(metrics.classification_report(y_validation, y_vali1_pred,
-#     tr= train_reviews.target_names))
-#
-# from sklearn import metrics
-# y_vali2_pred = clf_MB.predict(X_validation_normalized)
-# print(metrics.classification_report(y_validation, y_vali2_pred,
-#     target_names= train_reviews.target_names))
-#
-# from sklearn import metrics
-# y_vali3_pred = clf_SVM.predict(X_validation_normalized)
-# print(metrics.classification_report(y_validation, y_vali3_pred,
-#     target_names= train_reviews.target_names))
+
+
+
+
+
+
+
+
 
 
 
@@ -262,76 +441,6 @@ pd.DataFrame(y_test3_pred).to_csv("test_data_prediction_SVM.csv")
 print(X_test.iloc[12])
 print(type(test_reviews))
 
-### test on the test data (25000)
-### I finally know what the problemnn is !!! Damn it !!!!!!!!!
-#### train_test_split is setting data into arbitary!!! Damn it!!!!
-# X2_train, X_test, y2_train, y_test = train_test_split(corpus['review'],
-#                                                     corpus['target'],
-#                                                     train_size=0.5,
-#                                                     test_size=0.5)
-# X_test_counts = cv.transform(X_test)
-# X_test_tfidf = tfidf_transformer.transform(X_test_counts)
-# X_test_normalized = normalizer_tranformer.transform(X_test_tfidf)
-#
-# y_test1_pred = clf_LR.predict(X_test_normalized)
-# print(X_test.iloc[5])
-# print(type(test_reviews))
-# pd.DataFrame(y_test1_pred).to_csv("csv_test_func_test_data_prediction_LR.csv")
-#
-# y_test2_pred = clf_MB.predict(X_test_normalized)
-# #pd.DataFrame(y_pred).columns = ['Id','Category']
-# pd.DataFrame(y_test2_pred).to_csv("csv_test_data_prediction_MNB.csv")
-#
-# y_test3_pred = clf_SVM.predict(X_test_normalized)
-# #pd.DataFrame(y_pred).columns = ['Id','Category']
-# pd.DataFrame(y_test3_pred).to_csv("test_data_prediction_SVM.csv")
-#
-# ### Pipeline
-#
-# from sklearn.pipeline import Pipeline
-# pclf = Pipeline([
-#     ('vect', CountVectorizer()),
-#     ('tfidf', TfidfTransformer()),
-#     ('norm', Normalizer()),
-#     ('clf', MultinomialNB()),
-# ])
-#
-# pclf.fit(X_train, y_train)
-# y_pip_pred = pclf.predict(X_validation)
-# print(metrics.classification_report(y_vali1_pred, y_pip_pred))
-#
-# # From: https://scikit-learn.org/stable/auto_examples/model_selection/plot_randomized_search.html
-# def report(results, n_top=3):
-#     for i in range(1, n_top + 1):
-#         candidates = np.flatnonzero(results['rank_test_score'] == i)
-#         for candidate in candidates:
-#             print("Model with rank: {0}".format(i))
-#             print("Mean validation score: {0:.3f} (std: {1:.3f})".format(
-#                   results['mean_test_score'][candidate],
-#                   results['std_test_score'][candidate]))
-#             print("Parameters: {0}".format(results['params'][candidate]))
-#             print("")
-#
-#
-# ### Randomized Search and Cross Validation
-# from sklearn.model_selection import RandomizedSearchCV
-# from scipy.stats import randint as randint
-# from scipy.stats import uniform
-#
-# params = {"vect__ngram_range": [(1,1),(1,2),(2,2)],
-#           "tfidf__use_idf": [True, False],
-#           "clf__alpha": uniform(1e-2, 1e-3)}
-#
-# seed = 551 # Very important for repeatibility in experiments!
-#
-# random_search = RandomizedSearchCV(pclf, param_distributions = params, cv=2,
-#                                    verbose = 10, random_state = seed, n_iter = 1)
-# random_search.fit(X_train, y_train)
-#
-#
-# ### CV Results and Final Eval
-# report(random_search.cv_results_)
-# y_pred = random_search.predict(X_test)
-# print(metrics.classification_report(y_test, y_pred
-#                                     ))
-# #    ,target_names=train_reviews.target_names))
+
+## k-fold cross validation
+from sklearn.model_selection import KFold
