@@ -144,7 +144,7 @@ X_validation_tfidf = tfidf_transformer.transform(X_validation_counts)
 
 # step 2: normalization
 from sklearn.preprocessing import Normalizer
-normalizer_tranformer = Normalizer().fit(X=X_train_tfidf)
+normalizer_tranformer = Normalizer().fit(X_train_tfidf)
 X_train_normalized = normalizer_tranformer.transform(X_train_tfidf)
 X_validation_normalized = normalizer_tranformer.transform(X_validation_tfidf)
 
@@ -170,23 +170,7 @@ clf_DT = DecisionTreeClassifier().fit(X_train_normalized, y_train)
 y_vali4_pred = clf_DT.predict(X_validation_normalized)
 display_results(y_validation, y_vali4_pred,"Decision Trees Results")
 
-# ### prediction and evaluation
-# from sklearn import metrics
-# y_vali1_pred = clf_LR.predict(X_validation_normalized)
-# print(metrics.classification_report(y_validation, y_vali1_pred,
-#     tr= train_reviews.target_names))
-#
-# from sklearn import metrics
-# y_vali2_pred = clf_MB.predict(X_validation_normalized)
-# print(metrics.classification_report(y_validation, y_vali2_pred,
-#     target_names= train_reviews.target_names))
-#
-# from sklearn import metrics
-# y_vali3_pred = clf_SVM.predict(X_validation_normalized)
-# print(metrics.classification_report(y_validation, y_vali3_pred,
-#     target_names= train_reviews.target_names))
-
-
+### apply to test data and create Kaggle submission file
 X_test = test_reviews['review']
 X_test_counts = cv.transform(X_test)
 X_test_tfidf = tfidf_transformer.transform(X_test_counts)
@@ -204,9 +188,6 @@ pd.DataFrame(y_test3_pred).to_csv("test_data_prediction_SVM.csv")
 y_test3_pred = clf_DT.predict(X_test_normalized)
 pd.DataFrame(y_test3_pred).to_csv("test_data_prediction_DT.csv")
 
-print(X_test.iloc[12])
-print(type(test_reviews))
-
 '''
 Step 4: Pipelines
 '''
@@ -222,9 +203,8 @@ pclf1 = Pipeline([
     ('clf', MultinomialNB()),
 ])
 
-pclf1.fit(X_train, y_train)
+pclf1 = pclf1.fit(X_train, y_train)
 y_pip_pred = pclf1.predict(X_validation)
-print(metrics.classification_report(y_vali1_pred, y_pip_pred))
 display_results(y_vali1_pred, y_pip_pred,"")
 y_pip1_pred = pclf1.predict(X_test)
 pd.DataFrame(y_pip1_pred).to_csv("test_data_pip1_prediction_MNB.csv")
@@ -238,9 +218,8 @@ pclf2 = Pipeline([
     ('clf', MultinomialNB()),
 ])
 
-pclf2.fit(X_train, y_train)
+pclf2 = pclf2.fit(X_train, y_train)
 y_pip_pred = pclf2.predict(X_validation)
-print(metrics.classification_report(y_vali1_pred, y_pip_pred))
 display_results(y_vali1_pred, y_pip_pred,"")
 y_pip2_pred = pclf2.predict(X_test)
 pd.DataFrame(y_pip2_pred).to_csv("test_data_pip2_prediction_MNB.csv")
@@ -267,7 +246,6 @@ def report(results, n_top=3):
 
 ### Randomized Search and Cross Validation
 from sklearn.model_selection import RandomizedSearchCV
-from scipy.stats import randint as randint
 from scipy.stats import uniform
 
 params = {"vect__ngram_range": [(1,2),(1,3),(1,4)],
@@ -279,11 +257,9 @@ seed = 551 # Very important for repeatibility in experiments!
 random_search = RandomizedSearchCV(pclf1, param_distributions = params, cv=2,
                                    verbose = 10, random_state = seed, n_iter = 1)
 random_search.fit(X_train, y_train)
-#
-#
-# ### CV Results and Final Eval
+
+
+### CV Results and Final Eval
 report(random_search.cv_results_)
 y_cv_pred = random_search.predict(X_validation)
-print(metrics.classification_report(y_validation, y_cv_pred
-                                    ))
-#    ,target_names=train_reviews.target_names))
+display_results(y_validation, y_cv_pred,"")
