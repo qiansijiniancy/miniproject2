@@ -109,51 +109,51 @@ def clean_htmlandsymbol(raw_text):
 corpus['review'] = corpus['review'].apply(clean_htmlandsymbol)
 train_reviews['review'] = train_reviews['review'].apply(clean_htmlandsymbol)
 test_reviews['review'] = test_reviews['review'].apply(clean_htmlandsymbol)
-# #
-# # #### stemming
-# from nltk.stem import PorterStemmer
-# stemmer = PorterStemmer()
-# def stem_sentences(sentence):
-#     tokens = sentence.split()
-#     stemmed_tokens = [stemmer.stem(token) for token in tokens]
-#     return ' '.join(stemmed_tokens)
 #
-# corpus['review'] = corpus['review'].apply(stem_sentences)
-# train_reviews['review'] = train_reviews['review'].apply(stem_sentences)
-# test_reviews['review'] = test_reviews['review'].apply(stem_sentences)
-# #
-# # #####lemma
-# from nltk.stem.wordnet import WordNetLemmatizer
-# lmtzr = WordNetLemmatizer()
-# def lemmatize_sentences(sentence):
-#     tokens = sentence.split()
-#     lemmatized_tokens = [lmtzr.lemmatize(token) for token in tokens]
-#     return ' '.join(lemmatized_tokens)
+# #### stemming
+from nltk.stem import PorterStemmer
+stemmer = PorterStemmer()
+def stem_sentences(sentence):
+    tokens = sentence.split()
+    stemmed_tokens = [stemmer.stem(token) for token in tokens]
+    return ' '.join(stemmed_tokens)
+
+corpus['review'] = corpus['review'].apply(stem_sentences)
+train_reviews['review'] = train_reviews['review'].apply(stem_sentences)
+test_reviews['review'] = test_reviews['review'].apply(stem_sentences)
 #
-# corpus['review'] = corpus['review'].apply(lemmatize_sentences)
-#
-# corpus['review'] = corpus['review'].apply(lemmatize_sentences)
-# train_reviews['review'] = train_reviews['review'].apply(lemmatize_sentences)
-# test_reviews['review'] = test_reviews['review'].apply(lemmatize_sentences)
+# #####lemma
+from nltk.stem.wordnet import WordNetLemmatizer
+lmtzr = WordNetLemmatizer()
+def lemmatize_sentences(sentence):
+    tokens = sentence.split()
+    lemmatized_tokens = [lmtzr.lemmatize(token) for token in tokens]
+    return ' '.join(lemmatized_tokens)
+
+corpus['review'] = corpus['review'].apply(lemmatize_sentences)
+
+corpus['review'] = corpus['review'].apply(lemmatize_sentences)
+train_reviews['review'] = train_reviews['review'].apply(lemmatize_sentences)
+test_reviews['review'] = test_reviews['review'].apply(lemmatize_sentences)
 
 
-# ### stopwords remove
-# from nltk.corpus import stopwords
-# from nltk.tokenize import word_tokenize
-#
-# en_words = set(stopwords.words('english'))
-# corpus['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
-#     for x in corpus['review'].tolist()]
-#
-#
-# en_words = set(stopwords.words('english'))
-# train_reviews['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
-#     for x in train_reviews['review'].tolist()]
-#
-# en_words = set(stopwords.words('english'))
-# test_reviews['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
-#     for x in test_reviews['review'].tolist()]
-#
+### stopwords remove
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+en_words = set(stopwords.words('english'))
+corpus['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
+    for x in corpus['review'].tolist()]
+
+
+en_words = set(stopwords.words('english'))
+train_reviews['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
+    for x in train_reviews['review'].tolist()]
+
+en_words = set(stopwords.words('english'))
+test_reviews['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
+    for x in test_reviews['review'].tolist()]
+
 
 print(corpus['review'].head(10))
 print(corpus['review'].iloc[10])
@@ -172,7 +172,6 @@ Step 3: Model Training
 ### split training dataset into training set and validation set
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
-#tfidf = TfidfVectorizer(binary=False, stop_words='english', max_features=150000, ngram_range = (1, 2))
 X_train, X_validation, y_train, y_validation = train_test_split(train_reviews['review'],
                                                     train_reviews['target'],
                                                     train_size=0.8,
@@ -190,35 +189,36 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 
+### Best model during test
 ### Better Features
-# tfidf
+# step 1: tfidf
 from sklearn.feature_extraction.text import TfidfTransformer
 tfidf_transformer = TfidfTransformer(smooth_idf=False,norm='l2').fit(X_train_counts)
 X_train_tfidf = tfidf_transformer.transform(X_train_counts)
 X_validation_tfidf = tfidf_transformer.transform(X_validation_counts)
 
-# Normalization
+# step 2: normalization
 from sklearn.preprocessing import Normalizer
 normalizer_tranformer = Normalizer().fit(X=X_train_tfidf)
 X_train_normalized = normalizer_tranformer.transform(X_train_tfidf)
 X_validation_normalized = normalizer_tranformer.transform(X_validation_tfidf)
 
 # use metrics.classification_report to present the results
-def display_results(y_val, y_pred, heading):
-    print(metrics.classification_report(y_val, y_pred))
-    print("Accuracy % = ", metrics.accuracy_score(y_val, y_pred))
+def display_results(true_result, pred_result):
+    print(metrics.classification_report(true_result, pred_result))
+    print("Accuracy % = ", metrics.accuracy_score(true_result, pred_result))
 
 # models
 clf_LR = LogisticRegression().fit(X_train_normalized, y_train)
-y_vali1_pred = clf_LR.predict(X_validation_normalized)
+y_vali1_pred = clf_LR.predict(X_train_normalized)
 display_results(y_validation, y_vali1_pred,"")
 
 clf_MB = MultinomialNB(alpha=1.0).fit(X_train_normalized, y_train)
-y_vali2_pred = clf_MB.predict(X_validation_normalized)
+y_vali2_pred = clf_MB.predict(X_train_normalized)
 display_results(y_validation, y_vali2_pred,"")
 
 clf_SVM = LinearSVC().fit(X_train_normalized, y_train)
-y_vali3_pred = clf_SVM.predict(X_validation_normalized)
+y_vali3_pred = clf_SVM.predict(X_train_normalized)
 display_results(y_validation, y_vali3_pred,"")
 
 # ### prediction and evaluation
@@ -245,15 +245,14 @@ X_test_counts = cv.transform(X_test)
 X_test_tfidf = tfidf_transformer.transform(X_test_counts)
 X_test_normalized = normalizer_tranformer.transform(X_test_tfidf)
 
-y_test1_pred = clf_LR.predict(X_test_normalized)
-
+y_test1_pred = clf_LR.predict(X_train_normalized)
 pd.DataFrame(y_test1_pred).to_csv("test_data_prediction_LR.csv")
 
-y_test2_pred = clf_MB.predict(X_test_normalized)
+y_test2_pred = clf_MB.predict(X_train_normalized)
 #pd.DataFrame(y_pred).columns = ['Id','Category']
 pd.DataFrame(y_test2_pred).to_csv("test_data_prediction_MNB.csv")
 
-y_test3_pred = clf_SVM.predict(X_test_normalized)
+y_test3_pred = clf_SVM.predict(X_train_normalized)
 #pd.DataFrame(y_pred).columns = ['Id','Category']
 pd.DataFrame(y_test3_pred).to_csv("test_data_prediction_SVM.csv")
 
@@ -279,7 +278,8 @@ pclf1.fit(X_train, y_train)
 y_pip_pred = pclf1.predict(X_validation)
 print(metrics.classification_report(y_vali1_pred, y_pip_pred))
 display_results(y_vali1_pred, y_pip_pred,"")
-
+y_pip1_pred = pclf1.predict(X_test)
+pd.DataFrame(y_pip1_pred).to_csv("test_data_pip1_prediction_MNB.csv")
 
 ### Pipeline 2: binary occurence
 
