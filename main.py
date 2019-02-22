@@ -1,7 +1,4 @@
-## feb 17 version
-## Updates:
-## 1. test data order (should be lol)fixed
-## 2. Remove unuseful codes
+### Mini project 2
 
 import os
 import pandas as pd
@@ -22,6 +19,7 @@ cwd = os.getcwd()
 positive_folder =[]
 for x in os.listdir(cwd + '/data/train/pos/'):
     if x.endswith(".txt"):
+
         positive_folder.append(x)
 
 negative_folder =[]
@@ -58,20 +56,20 @@ train_reviews = pd.concat([
 #],
 # ignore_index=True).sample(frac=1, random_state=1)
 
-
-pos_reviews = pd.concat([
-    pd.DataFrame({"review":positiveReviews, "target":1}),
-    #pd.DataFrame({"review":negativeReviews, "target":0}),
-#])
- ],
-     ignore_index=True).sample(frac=1, random_state=1)
-
-neg_reviews = pd.concat([
-    #pd.DataFrame({"review":positiveReviews, "target":1}),
-    pd.DataFrame({"review":negativeReviews, "target":0}),
-#])
- ],
-     ignore_index=True).sample(frac=1, random_state=1)
+#
+# pos_reviews = pd.concat([
+#     pd.DataFrame({"review":positiveReviews, "target":1}),
+#     #pd.DataFrame({"review":negativeReviews, "target":0}),
+# #])
+#  ],
+#      ignore_index=True).sample(frac=1, random_state=1)
+#
+# neg_reviews = pd.concat([
+#     #pd.DataFrame({"review":positiveReviews, "target":1}),
+#     pd.DataFrame({"review":negativeReviews, "target":0}),
+# #])
+#  ],
+#      ignore_index=True).sample(frac=1, random_state=1)
 
 test_reviews = pd.concat([
     pd.DataFrame({"review":test_review_file["review"], "target":0})])
@@ -111,51 +109,51 @@ def clean_htmlandsymbol(raw_text):
 corpus['review'] = corpus['review'].apply(clean_htmlandsymbol)
 train_reviews['review'] = train_reviews['review'].apply(clean_htmlandsymbol)
 test_reviews['review'] = test_reviews['review'].apply(clean_htmlandsymbol)
-
+# #
+# # #### stemming
+# from nltk.stem import PorterStemmer
+# stemmer = PorterStemmer()
+# def stem_sentences(sentence):
+#     tokens = sentence.split()
+#     stemmed_tokens = [stemmer.stem(token) for token in tokens]
+#     return ' '.join(stemmed_tokens)
 #
-# #### stemming
-from nltk.stem import PorterStemmer
-stemmer = PorterStemmer()
-def stem_sentences(sentence):
-    tokens = sentence.split()
-    stemmed_tokens = [stemmer.stem(token) for token in tokens]
-    return ' '.join(stemmed_tokens)
-
-corpus['review'] = corpus['review'].apply(stem_sentences)
-train_reviews['review'] = train_reviews['review'].apply(stem_sentences)
-test_reviews['review'] = test_reviews['review'].apply(stem_sentences)
+# corpus['review'] = corpus['review'].apply(stem_sentences)
+# train_reviews['review'] = train_reviews['review'].apply(stem_sentences)
+# test_reviews['review'] = test_reviews['review'].apply(stem_sentences)
+# #
+# # #####lemma
+# from nltk.stem.wordnet import WordNetLemmatizer
+# lmtzr = WordNetLemmatizer()
+# def lemmatize_sentences(sentence):
+#     tokens = sentence.split()
+#     lemmatized_tokens = [lmtzr.lemmatize(token) for token in tokens]
+#     return ' '.join(lemmatized_tokens)
 #
-# #####lemma
-from nltk.stem.wordnet import WordNetLemmatizer
-lmtzr = WordNetLemmatizer()
-def lemmatize_sentences(sentence):
-    tokens = sentence.split()
-    lemmatized_tokens = [lmtzr.lemmatize(token) for token in tokens]
-    return ' '.join(lemmatized_tokens)
-
-corpus['review'] = corpus['review'].apply(lemmatize_sentences)
-
-corpus['review'] = corpus['review'].apply(lemmatize_sentences)
-train_reviews['review'] = train_reviews['review'].apply(lemmatize_sentences)
-test_reviews['review'] = test_reviews['review'].apply(lemmatize_sentences)
-
-### stopwords remove
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-
-en_words = set(stopwords.words('english'))
-corpus['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
-    for x in corpus['review'].tolist()]
+# corpus['review'] = corpus['review'].apply(lemmatize_sentences)
+#
+# corpus['review'] = corpus['review'].apply(lemmatize_sentences)
+# train_reviews['review'] = train_reviews['review'].apply(lemmatize_sentences)
+# test_reviews['review'] = test_reviews['review'].apply(lemmatize_sentences)
 
 
-en_words = set(stopwords.words('english'))
-train_reviews['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
-    for x in train_reviews['review'].tolist()]
-
-en_words = set(stopwords.words('english'))
-test_reviews['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
-    for x in test_reviews['review'].tolist()]
-
+# ### stopwords remove
+# from nltk.corpus import stopwords
+# from nltk.tokenize import word_tokenize
+#
+# en_words = set(stopwords.words('english'))
+# corpus['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
+#     for x in corpus['review'].tolist()]
+#
+#
+# en_words = set(stopwords.words('english'))
+# train_reviews['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
+#     for x in train_reviews['review'].tolist()]
+#
+# en_words = set(stopwords.words('english'))
+# test_reviews['review'] = [' '.join([w for w in x.lower().split() if w not in en_words])
+#     for x in test_reviews['review'].tolist()]
+#
 
 print(corpus['review'].head(10))
 print(corpus['review'].iloc[10])
@@ -174,14 +172,14 @@ Step 3: Model Training
 ### split training dataset into training set and validation set
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
-tfidf = TfidfVectorizer(binary=False, stop_words='english', max_features=150000, ngram_range = (1, 2))
+#tfidf = TfidfVectorizer(binary=False, stop_words='english', max_features=150000, ngram_range = (1, 2))
 X_train, X_validation, y_train, y_validation = train_test_split(train_reviews['review'],
                                                     train_reviews['target'],
                                                     train_size=0.8,
                                                     test_size=0.2)
 ### Bag of Words
 from sklearn.feature_extraction.text import CountVectorizer
-cv = CountVectorizer().fit(X_train)
+cv = CountVectorizer(binary=True, stop_words='english',ngram_range=(1, 2)).fit(X_train)
 X_train_counts = cv.transform(X_train)
 X_validation_counts = cv.transform(X_validation)
 
@@ -195,7 +193,7 @@ from sklearn.naive_bayes import MultinomialNB
 ### Better Features
 # tfidf
 from sklearn.feature_extraction.text import TfidfTransformer
-tfidf_transformer = TfidfTransformer().fit(X_train_counts)
+tfidf_transformer = TfidfTransformer(smooth_idf=False,norm='l2').fit(X_train_counts)
 X_train_tfidf = tfidf_transformer.transform(X_train_counts)
 X_validation_tfidf = tfidf_transformer.transform(X_validation_counts)
 
@@ -262,76 +260,82 @@ pd.DataFrame(y_test3_pred).to_csv("test_data_prediction_SVM.csv")
 print(X_test.iloc[12])
 print(type(test_reviews))
 
-### test on the test data (25000)
-### I finally know what the problemnn is !!! Damn it !!!!!!!!!
-#### train_test_split is setting data into arbitary!!! Damn it!!!!
-# X2_train, X_test, y2_train, y_test = train_test_split(corpus['review'],
-#                                                     corpus['target'],
-#                                                     train_size=0.5,
-#                                                     test_size=0.5)
-# X_test_counts = cv.transform(X_test)
-# X_test_tfidf = tfidf_transformer.transform(X_test_counts)
-# X_test_normalized = normalizer_tranformer.transform(X_test_tfidf)
-#
-# y_test1_pred = clf_LR.predict(X_test_normalized)
-# print(X_test.iloc[5])
-# print(type(test_reviews))
-# pd.DataFrame(y_test1_pred).to_csv("csv_test_func_test_data_prediction_LR.csv")
-#
-# y_test2_pred = clf_MB.predict(X_test_normalized)
-# #pd.DataFrame(y_pred).columns = ['Id','Category']
-# pd.DataFrame(y_test2_pred).to_csv("csv_test_data_prediction_MNB.csv")
-#
-# y_test3_pred = clf_SVM.predict(X_test_normalized)
-# #pd.DataFrame(y_pred).columns = ['Id','Category']
-# pd.DataFrame(y_test3_pred).to_csv("test_data_prediction_SVM.csv")
-#
-# ### Pipeline
-#
-# from sklearn.pipeline import Pipeline
-# pclf = Pipeline([
-#     ('vect', CountVectorizer()),
-#     ('tfidf', TfidfTransformer()),
-#     ('norm', Normalizer()),
-#     ('clf', MultinomialNB()),
-# ])
-#
-# pclf.fit(X_train, y_train)
-# y_pip_pred = pclf.predict(X_validation)
-# print(metrics.classification_report(y_vali1_pred, y_pip_pred))
-#
-# # From: https://scikit-learn.org/stable/auto_examples/model_selection/plot_randomized_search.html
-# def report(results, n_top=3):
-#     for i in range(1, n_top + 1):
-#         candidates = np.flatnonzero(results['rank_test_score'] == i)
-#         for candidate in candidates:
-#             print("Model with rank: {0}".format(i))
-#             print("Mean validation score: {0:.3f} (std: {1:.3f})".format(
-#                   results['mean_test_score'][candidate],
-#                   results['std_test_score'][candidate]))
-#             print("Parameters: {0}".format(results['params'][candidate]))
-#             print("")
-#
-#
-# ### Randomized Search and Cross Validation
-# from sklearn.model_selection import RandomizedSearchCV
-# from scipy.stats import randint as randint
-# from scipy.stats import uniform
-#
-# params = {"vect__ngram_range": [(1,1),(1,2),(2,2)],
-#           "tfidf__use_idf": [True, False],
-#           "clf__alpha": uniform(1e-2, 1e-3)}
-#
-# seed = 551 # Very important for repeatibility in experiments!
-#
-# random_search = RandomizedSearchCV(pclf, param_distributions = params, cv=2,
-#                                    verbose = 10, random_state = seed, n_iter = 1)
-# random_search.fit(X_train, y_train)
+'''
+Step 4: Pipelines
+'''
+### Two Pipelines
+
+### Pipeline 1: tf-idf
+### counts -> tf-idf -> normalizing -> estimator
+from sklearn.pipeline import Pipeline
+pclf1 = Pipeline([
+    ('vect', CountVectorizer()),
+    ('tfidf', TfidfTransformer()),
+    ('norm', Normalizer()),
+    ('clf', MultinomialNB()),
+])
+
+pclf1.fit(X_train, y_train)
+y_pip_pred = pclf1.predict(X_validation)
+print(metrics.classification_report(y_vali1_pred, y_pip_pred))
+display_results(y_vali1_pred, y_pip_pred,"")
+
+
+### Pipeline 2: binary occurence
+
+from sklearn.pipeline import Pipeline
+pclf2 = Pipeline([
+    ('vect', CountVectorizer(binary=True)),
+    ('norm', Normalizer()),
+    ('clf', MultinomialNB()),
+])
+
+pclf2.fit(X_train, y_train)
+y_pip_pred = pclf2.predict(X_validation)
+print(metrics.classification_report(y_vali1_pred, y_pip_pred))
+display_results(y_vali1_pred, y_pip_pred,"")
+y_pip2_pred = pclf2.predict(X_test)
+pd.DataFrame(y_pip2_pred).to_csv("test_data_pip2_prediction_MNB.csv")
+
+'''
+Step 5: Validation pipeline
+'''
+
+# ref: https://colab.research.google.com/drive/1LQuuM9oNuQhX16jyMoD2ekkIvJ4nefHd
+# Orignially from:
+# https://scikit-learn.org/stable/auto_examples/model_selection/plot_randomized_search.html
+
+def report(results, n_top=3):
+    for i in range(1, n_top + 1):
+        candidates = np.flatnonzero(results['rank_test_score'] == i)
+        for candidate in candidates:
+            print("Model with rank: {0}".format(i))
+            print("Mean validation score: {0:.3f} (std: {1:.3f})".format(
+                  results['mean_test_score'][candidate],
+                  results['std_test_score'][candidate]))
+            print("Parameters: {0}".format(results['params'][candidate]))
+            print("")
+
+
+### Randomized Search and Cross Validation
+from sklearn.model_selection import RandomizedSearchCV
+from scipy.stats import randint as randint
+from scipy.stats import uniform
+
+params = {"vect__ngram_range": [(1,2),(1,3),(1,4)],
+          "tfidf__use_idf": [True, False],
+          "clf__alpha": uniform(1e-2, 1e-3)}
+
+seed = 551 # Very important for repeatibility in experiments!
+
+random_search = RandomizedSearchCV(pclf1, param_distributions = params, cv=2,
+                                   verbose = 10, random_state = seed, n_iter = 1)
+random_search.fit(X_train, y_train)
 #
 #
 # ### CV Results and Final Eval
-# report(random_search.cv_results_)
-# y_pred = random_search.predict(X_test)
-# print(metrics.classification_report(y_test, y_pred
-#                                     ))
-# #    ,target_names=train_reviews.target_names))
+report(random_search.cv_results_)
+y_cv_pred = random_search.predict(X_validation)
+print(metrics.classification_report(y_validation, y_cv_pred
+                                    ))
+#    ,target_names=train_reviews.target_names))
